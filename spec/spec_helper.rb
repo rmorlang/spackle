@@ -4,6 +4,10 @@ require 'spackle'
 require 'spec'
 require 'spec/autorun'
 
+
+require 'run_testapp_helper'
+
+
 Spec::Runner.configure do |config|
-  
+  config.include(RunTestappHelper)
 end
