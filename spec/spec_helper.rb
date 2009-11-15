@@ -6,8 +6,10 @@ require 'spec/autorun'
 
 
 require 'run_testapp_helper'
+require 'spackle_error_fixture'
 
 
 Spec::Runner.configure do |config|
-  config.include(RunTestappHelper)
+  config.include RunTestappHelper
+  config.include SpackleErrorFixture
 end

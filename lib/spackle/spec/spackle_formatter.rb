@@ -1,43 +1,14 @@
-require 'spec/runner/formatter/base_formatter'
-
-# credit to https://wincent.com/blog/running-rspec-specs-from-inside-vim
-# for the basis of this formatter
+require 'spackle/spec/base_formatter'
 
 module Spackle::Spec
-  class SpackleFormatter < ::Spec::Runner::Formatter::BaseFormatter
-    attr_reader :output
-
-    def initialize(options, output)
-      if String === output
-        FileUtils.mkdir_p(File.dirname(output))
-        @output = File.open(output, 'w')
-      else
-        @output = output
-      end
-    end
-
+  class SpackleFormatter < BaseFormatter
     def example_failed(example, counter, failure)
-      path = failure.exception.backtrace.find do |frame|
-        frame =~ %r{\bspec/.*_spec\.rb:\d+\z}
+      error = Spackle::Error.new failure.exception.message 
+      failure.exception.backtrace.each do |frame|
+        file, line = frame.match(/^([^:]+):([0-9]+)/)[1,2]
+        error.add_error file, line 
       end
-      message = failure.exception.message.gsub("\n", ' ')
-      output.puts "#{relativize_path(path)}: #{message}" if path
+      self.errors << Spackle.format_error(error)
     end
-
-    private
-
-    def relativize_path path
-      @wd ||= Pathname.new Dir.getwd
-      begin
-        return Pathname.new(path).relative_path_from(@wd)
-      rescue ArgumentError
-        # raised unless both paths relative, or both absolute
-        return path
-      end
-    end
-  end
-
-  def close
-    @output.close  if (IO === @output) & (@output != $stdout)
   end
 end

@@ -6,10 +6,12 @@ module Spackle
       @subject = Spackle::Configuration.new
     end
 
+    it { should respond_to(:callback_command=) }
     it { should respond_to(:callback_command) }
-    it { should respond_to(:callback_command) }
+    it { should respond_to(:tempdir=) }
     it { should respond_to(:tempdir) }
-    it { should respond_to(:tempdir) }
+    it { should respond_to(:error_formatter=) }
+    it { should respond_to(:error_formatter) }
 
     it { should respond_to(:set_defaults_for) }
 
@@ -26,6 +28,10 @@ module Spackle
 
       it "should set the editor to spackle-vim-load-quickfix" do
         @subject.callback_command.should == "spackle-vim-load-quickfix"
+      end
+
+      it "should set the error formatter to :vim_quickfix" do
+        @subject.error_formatter.should == :vim_quickfix
       end
     end
 
