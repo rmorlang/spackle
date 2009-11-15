@@ -1,6 +1,7 @@
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__)))
 
 require 'spackle/configuration'
+require 'spackle/error'
 require 'spackle/spec' if defined? Spec
 
 module Spackle
