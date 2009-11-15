@@ -5,8 +5,12 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "spackle"
-    gem.summary = %Q{TODO: one-line summary of your gem}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.summary = %Q{Spackle tells your editor about the errors in your code}
+    gem.description = %Q{
+Spackle tells your editor about the errors in your code. No more need to 
+visually scan your test output for errors, filenames, and line numbers.
+Just tell your editor to jump to the next error location.
+		}
     gem.email = "rick@lee-morlang.com"
     gem.homepage = "http://github.com/rleemorlang/spackle"
     gem.authors = ["Rick Lee-Morlang"]
