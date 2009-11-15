@@ -48,16 +48,9 @@ module Spackle::Spec
         example_failed
       end
 
-      it "should format the error object" do
-        Spackle.should_receive(:format_error).with(@error)
-        example_failed
-      end
-
       it "should append the to the errors format" do
-        formatted_error = mock("result")
-        Spackle.stub!(:format_error).and_return(formatted_error)
         example_failed
-        @subject.errors.last.should == formatted_error
+        @subject.errors.last.should == @error
       end
     end
   end

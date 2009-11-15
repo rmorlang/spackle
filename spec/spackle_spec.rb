@@ -1,6 +1,9 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-class Spackle::Output::SomeClass; end
+class Spackle::Output::SomeClass
+  def self.format(*args)
+  end
+end
 
 describe Spackle do
   it "should be configurable" do
@@ -62,6 +65,13 @@ describe Spackle do
       Spackle.configuration.error_formatter = :some_class
       Spackle.error_formatter_class.should == Spackle::Output::SomeClass
     end
+
+    it "should raise a helpful error if no matching class can be found" do
+      Spackle.configuration.error_formatter = :not_existing
+      lambda {
+        Spackle.error_formatter_class
+      }.should raise_error(RuntimeError, /\.spackle/)
+    end
   end
 
   describe "test_finished" do
@@ -71,14 +81,14 @@ describe Spackle do
       @file = StringIO.new
       File.stub!(:open).and_yield(@file)
       Spackle.stub!(
-        :formatter_class => @formatter,
+        :error_formatter_class => @formatter,
         :system => true,
         :spackle_file => @spackle_file
       )
     end
 
     it "should write the output to the spackle_file" do
-      File.should_receive(:open).with(@spackle_file, "w", '0600')
+      File.should_receive(:open).with(@spackle_file, "w", 0600)
       Spackle.test_finished @errors
     end
 

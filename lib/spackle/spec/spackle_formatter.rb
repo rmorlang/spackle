@@ -8,7 +8,7 @@ module Spackle::Spec
         file, line = frame.match(/^([^:]+):([0-9]+)/)[1,2]
         error.add_error file, line 
       end
-      self.errors << Spackle.format_error(error)
+      self.errors << error
     end
   end
 end

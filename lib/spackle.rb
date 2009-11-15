@@ -22,7 +22,13 @@ module Spackle
     def error_formatter_class
       class_name = configuration.error_formatter.to_s.
         split("_").collect { |w| w.capitalize }.join
-      eval("Spackle::Output::#{class_name}")
+      begin
+        eval("Spackle::Output::#{class_name}")
+      rescue SyntaxError
+        raise RuntimeError.new("Spackle Error: no configuration for error_formatter_class -- have you configured Spackle with a .spackle file?")
+      rescue NameError
+        raise RuntimeError.new("Spackle Error: Cannot find Spackle::Output::#{class_name} -- have you configured Spackle with a .spackle file?")
+      end
     end
 
     def load_config
@@ -48,9 +54,9 @@ module Spackle
     end
 
     def test_finished(errors)
-      File.open( spackle_file, "w", "0600" ) do |f|
+      File.open( spackle_file, "w", 0600 ) do |f|
         errors.each do |error|
-          f.write formatter_class.format(error)
+          f.write error_formatter_class.format(error)
         end
       end
       system(configuration.callback_command, spackle_file) if configuration.callback_command
