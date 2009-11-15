@@ -1,7 +1,7 @@
-require File.expand_path(File.dirname(__FILE__) + '../../../../spec_helper')
+require File.expand_path(File.dirname(__FILE__) + '../../../spec_helper')
 
-module Spackle::Spec::Formatter
-  describe VimQuickfix do
+module Spackle::Spec
+  describe SpackleFormatter do
     it "running passing_working_class should return no output" do
       run_spec(:passing_working_class, :with => :vim_quickfix)
       test_output.should be_empty
