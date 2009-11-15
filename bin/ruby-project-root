@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# Search recursively from the current working directory up for something
+# that looks like the root directory of a Ruby project.
+#
+# Returns a blank string and exits with code 1 if it can't find
+# a project dir.
+#
+# Stops looking when it reaches the top of the tree, or the user's
+# home directory.
+#
+# Detects a project dir via any of:
+#  * a config/environment.rb file
+#  * a spec/spec_helper.rb file
+#  * a features/step_definitions directory
+
+function realdir() {
+  echo `cd "$1" && pwd`
+}
+
+function isProjectDir() {
+  DIR=$1
+	if ( test -f $1/config/environment.rb ); then
+		return 0
+	elif ( test -f $1/spec/spec_helper.rb ); then
+		return 0
+	elif ( test -d $1/features/step_definitons ); then
+		return 0
+	else
+		return 1
+	fi
+}
+
+DIR=`pwd`
+while [ "$DIR" != "" -a "$DIR" != "/" -a "$DIR" != "$HOME" ]; do
+  if ( isProjectDir $DIR ); then
+		if [ "$1" = "--basename" -o "$1" = "-b" ]; then
+	    basename $DIR
+		else
+			echo $DIR
+		fi
+    exit 0
+  else
+    DIR=`realdir $DIR/..`
+  fi
+done
+exit 1
+

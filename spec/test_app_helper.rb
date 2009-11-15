@@ -22,6 +22,7 @@ module TestAppHelper
           c.set_defaults_for :vim
           c.spackle_file = "#{File.basename(spackle_output_file.path)}"
           c.tempdir = "#{File.dirname(spackle_output_file.path)}"
+          c.callback_command = "/bin/true"
         end
       END
       @dot_spackle.close
