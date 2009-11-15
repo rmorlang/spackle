@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# Load a Vim Quickfix file in an active vim session.
+#
+# Usage:
+# spackle-vim-load-quickfix [servername] quickfix_file
+#
+# If servername is specified, try to use it as the vim
+# server. Otherwise, assume the name for the vim server
+# is the from ruby-project-root -basename, if
+# successful. If no Ruby project root was found, use
+# DEFAULT as the servername.
+#
+# If the server doesn't exist, we'll create a new
+# gvim session.
+#
+
+COUNT=0
+GET_NEXT=0
+for ARG do
+	if [ "$ARG" = "--servername" ]; then
+		GET_NEXT=1
+	elif [ $GET_NEXT = 1 ]; then
+		GET_NEXT=0
+		SERVER=$ARG
+	else
+		ARGS[$COUNT]=$ARG
+		COUNT=`expr $COUNT +  1`
+	fi
+done
+
+
+if [ "$SERVER" = "" ]; then
+	SERVER=`ruby-project-root -b`
+	if [ $? -ne 0 ]; then
+		SERVER=DEFAULT
+	fi
+fi
+
+COMMAND="gvim --servername $SERVER"
+
+if [ ${#ARGS[@]} -gt 0 ]; then
+	exec $COMMAND --remote-silent ${ARGS[@]}
+else
+	exec $COMMAND
+fi
