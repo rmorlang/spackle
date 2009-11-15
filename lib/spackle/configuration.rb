@@ -14,6 +14,10 @@ module Spackle
     # i.e. config.error_formatter = :vim_quickfix
     attr_accessor :error_formatter
 
+    # Filename to use when writing the formatted Spackle results. If 
+    # unspecified, defaults to "default.spackle"
+    attr_accessor :spackle_file
+
     # Configure Spackle with defaults. Currently only accepts :vim as an
     # argument.
     def set_defaults_for(mode)

@@ -10,6 +10,7 @@ module Spackle::Spec
 
     def initialize(options, output)
       # we ignore output, for now
+      Spackle.init
       @options = options
       self.errors = []
     end

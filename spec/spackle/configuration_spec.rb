@@ -12,6 +12,8 @@ module Spackle
     it { should respond_to(:tempdir) }
     it { should respond_to(:error_formatter=) }
     it { should respond_to(:error_formatter) }
+    it { should respond_to(:spackle_file=) }
+    it { should respond_to(:spackle_file) }
 
     it { should respond_to(:set_defaults_for) }
 

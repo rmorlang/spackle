@@ -58,6 +58,18 @@ describe Spackle do
       Spackle.stub!(:tempdir).and_return("/temp")
       Spackle.spackle_file.should match(%r{^/temp/.+})
     end
+
+    it "should end with default.spackle if no spackle_file specfied in Configuration" do
+      Spackle.configuration.spackle_file = nil
+      Spackle.spackle_file.should match(%r(/default\.spackle$))
+    end
+
+    it "should end with the Configuration's spackle_file if specified" do
+      Spackle.configuration.spackle_file = "my_spackle"
+      Spackle.spackle_file.should match(%r(/my_spackle$))
+    end
+
+
   end
 
   describe "formatter_class" do
@@ -113,6 +125,35 @@ describe Spackle do
       @file.should_receive(:write).with("string")
       Spackle.test_finished @errors
     end
+  end
+
+  describe "init" do
+    before do
+      Spackle.stub! :load_config => true,
+                    :spackle_file => true,
+                    :already_initialized? => false
+      File.stub!    :unlink => true
+    end
+    
+    it "should only init once" do
+      Spackle.should_receive(:load_config).exactly(1).times
+      Spackle.init
+      Spackle.stub! :already_initialized? => true
+      Spackle.should_not_receive(:load_config)
+      Spackle.init
+    end
+
+    it "should delete any old file" do
+      Spackle.stub! :spackle_file => "file"
+      File.should_receive(:unlink).with("file")
+      Spackle.init
+    end
+
+    it "should load the config" do
+      Spackle.should_receive :load_config
+      Spackle.init
+    end
+
   end
 
 end

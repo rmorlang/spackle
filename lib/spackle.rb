@@ -7,6 +7,10 @@ require 'spackle/spec' if defined? Spec
 
 module Spackle
   class << self
+    def already_initialized?
+      @already_initialized == true
+    end
+
     def callback_command
       Spackle.configuration.callback_command 
     end
@@ -31,12 +35,23 @@ module Spackle
       end
     end
 
+    def init
+      unless already_initialized?
+        @already_initialized = true
+        load_config
+        File.unlink spackle_file
+      end
+    end
+
     def load_config
       load_config_from_dotfile or configuration.set_defaults_for(:vim)
     end
 
     def load_config_from_dotfile
-      [ File.expand_path("~/.spackle"), "./.spackle"  ].inject(false) do |config_loaded, file|
+      config_files = [ File.expand_path("~/.spackle"), "./.spackle"  ]
+      # SPACKLE_CONFIG is mostly intended for use with the integration tests
+      config_files << File.expand_path(ENV['SPACKLE_CONFIG']) if ENV['SPACKLE_CONFIG']
+      config_files.inject(false) do |config_loaded, file|
         if File.exists? file
           load file 
           config_loaded = true
@@ -46,7 +61,7 @@ module Spackle
     end
 
     def spackle_file
-      File.join(tempdir, "default.spackle")      
+      File.join(tempdir, configuration.spackle_file || "default.spackle")      
     end
 
     def tempdir
