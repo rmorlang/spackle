@@ -54,15 +54,20 @@ module Spackle
     end
 
     def load_config_from_dotfile
-      config_files = [ File.expand_path("~/.spackle") ]
+      config_files = []
       
-      project_root = Spackle::Helpers::RubyProjectRoot.search Dir.pwd
-      if project_root
-        config_files << File.join(project_root, ".spackle")
+      if ENV['SPACKLE_CONFIG']
+        # SPACKLE_CONFIG is mostly intended for use with the integration tests
+        config_files << File.expand_path(ENV['SPACKLE_CONFIG']) 
+      else
+        config_files << File.expand_path("~/.spackle") 
+
+        project_root = Spackle::Helpers::RubyProjectRoot.search Dir.pwd
+        if project_root
+          config_files << File.join(project_root, ".spackle")
+        end
       end
 
-      # SPACKLE_CONFIG is mostly intended for use with the integration tests
-      config_files << File.expand_path(ENV['SPACKLE_CONFIG']) if ENV['SPACKLE_CONFIG']
       config_files.inject(false) do |config_loaded, file|
         if File.exists? file
           load file 
