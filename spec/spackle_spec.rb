@@ -29,10 +29,10 @@ describe Spackle do
 
 
   describe "loading configuration" do
-    it "should use the vim defaults if no config is found" do
-      Spackle.configuration.should_receive(:set_defaults_for).with(:vim)
+    it "should have nil for the callback command if no config found" do
       Spackle.stub(:load_config_from_dotfile).and_return(false) 
       Spackle.load_config
+      Spackle.configuration.callback_command.should be_nil
     end
 
     it "should not use the vim defaults when a config file is found" do
@@ -98,10 +98,15 @@ describe Spackle do
         :system => true,
         :spackle_file => @spackle_file
       )
+      Spackle.configuration.error_formatter = :something
     end
 
-    it "should write the output to the spackle_file" do
-      File.should_receive(:open).with(@spackle_file, "w", 0600)
+    it "should write the output to the spackle_file if defined" do
+    end
+
+    it "should not write the spackle_file if the error_formatter is undefined" do
+      Spackle.configuration.error_formatter = nil
+      File.should_not_receive(:open)
       Spackle.test_finished @errors
     end
 

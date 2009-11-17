@@ -49,7 +49,7 @@ module Spackle
     end
 
     def load_config
-      load_config_from_dotfile or configuration.set_defaults_for(:vim)
+      load_config_from_dotfile 
     end
 
     def load_config_from_dotfile
@@ -74,6 +74,7 @@ module Spackle
     end
 
     def test_finished(errors)
+      return unless configuration.error_formatter
       File.open( spackle_file, "w", 0600 ) do |f|
         errors.each do |error|
           f.write error_formatter_class.format(error)
