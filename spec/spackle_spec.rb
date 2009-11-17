@@ -16,13 +16,24 @@ describe Spackle do
   end
 
   describe "load_config_from_dotfile" do
+    before do
+      Spackle.stub!(:load)
+    end
+
     it "should return false if a config file was found" do
       File.stub(:exists?).and_return false
       Spackle.load_config_from_dotfile.should be_false
     end
+
     it "should return true if a config file was found" do
       File.stub(:exists?).and_return true
-      Spackle.stub!(:load)
+      Spackle.load_config_from_dotfile.should be_true
+    end
+
+    it "should check for a .spackle file in the project root directory" do
+      Spackle::Helpers::RubyProjectRoot.should_receive(:search).and_return("/some/dir/project")
+      File.should_receive(:exists?).with any_args()
+      File.should_receive(:exists?).with("/some/dir/project/.spackle").and_return(true)
       Spackle.load_config_from_dotfile.should be_true
     end
   end
