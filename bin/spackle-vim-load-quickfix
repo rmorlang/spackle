@@ -1,4 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env ruby
+spackle_dir = File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib'))
+$LOAD_PATH.unshift(spackle_dir) unless $LOAD_PATH.include?(spackle_dir)
+
+require 'spackle/helpers/ruby_project_root'
 
 # Load a Vim Quickfix file in an active vim session.
 #
@@ -15,23 +19,29 @@
 # gvim session.
 #
 
-if [ "$2" != "" ]; then
-	SERVER=$1
-	QUICKFIX=$2
-else
-	QUICKFIX=$1
-	SERVER=`ruby-project-root -b`
-	if [ $? -ne 0 ]; then
-		SERVER=DEFAULT
-	fi
-fi
+def servername_from_arguments
+  ARGV.shift if ARGV.count == 2
+end
 
-if [ ! `gvim --serverlist | grep -i $SERVER` ]; then
-	gvim --servername $SERVER 
-	sleep 1
-fi
+def servername_from_project_root
+  project_root = Spackle::Helpers::RubyProjectRoot.search Dir.pwd
+  File.basename(project_root) if project_root
+end
 
-gvim --servername $SERVER --remote-send "<ESC>" &> /dev/null
-gvim --servername $SERVER --remote-expr "LoadSpackleQuickfix(\"$1\")" &> /dev/null
-gvim --servername $SERVER --remote-send "<ESC><C-W>p" &> /dev/null
+def servername
+  @servername ||= servername_from_arguments || servername_from_project_root || "DEFAULT"
+end
+
+def server_running?
+  !`gvim --serverlist`.grep(/#{servername}/i).empty?
+end
+
+unless server_running?
+  system %{gvim --servername #{servername}}
+  sleep 1
+end
+
+system %{gvim --servername #{servername} --remote-send "<ESC>" &> /dev/null}
+system %{gvim --servername #{servername} --remote-expr "LoadSpackleQuickfix('#{ARGV.first}')" &> /dev/null}
+system %{gvim --servername #{servername} --remote-send "<ESC><C-W>p" &> /dev/null}
 
