@@ -192,7 +192,7 @@ describe Spackle do
     end
 
     it "should insert the RSpec formatter if :with => :spec_formatter specified" do
-      Spec::Runner.should_receive(:parse_format).with /Spackle::Spec::Formatter/
+      Spec::Runner.options.should_receive(:parse_format).with /Spackle::Spec::SpackleFormatter/
       Spackle.init :with => :spec_formatter
     end
 

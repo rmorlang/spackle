@@ -45,7 +45,7 @@ module Spackle
 
       case options[:with]
       when :spec_formatter
-        ::Spec::Runner.parse_format "Spackle::Spec::Formatter:/dev/null"
+        ::Spec::Runner.options.parse_format "Spackle::Spec::SpackleFormatter:/dev/null"
       end
     end
 
