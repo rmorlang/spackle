@@ -1,6 +1,6 @@
 = Spackle
 
-Smoothing out the gaps between the Rubyist and the Ruby. 
+<em>Smoothing out the gaps between the Rubyist and the Ruby.</em>
 
 Well, honestly, it only fills in the gaps between RSpec and Vim right now,
 but that's a good start. Cucumber support is in the works, and perhaps a
@@ -17,39 +17,87 @@ Spackle tells your editor about the errors in your code. No more need to
 visually scan your test output for errors, filenames, and line numbers.
 Just tell your editor to jump to the next error location.
 
-== Installation
-
-  gem install spackle --sources http://gemcutter.org
-  spackle-install vim
-
-This will install Spackle's Vim plugin in ~/.vim/plugins, and
-will install a few other helper scripts in your bin dir.
-
-
 == Features
 
 * custom RSpec formatters that generate output compatible with 
   Vim's quickfix functionality
-* a simple Vim plugin to allow a quickfix list to loaded 
+* a simple Vim plugin to allow a quickfix list to be loaded 
   from a file
-* shell scripts to Spackle's output and Vim together
+* shell scripts to glue Spackle's output and Vim together
 * easy to use?
+
+== Quick Installation
+
+  gem install spackle --source http://gemcutter.org
+  spackle --install vim  # described below
+  echo 'Spackle.configuration.set_defaults_for :vim' > ~/.spackle
 
 == Configuration and Usage
 
 For a tool that doesn't do a heck of alot, it's pretty configurable.
-If it *could* do something else, it'd be easy to tell it how to do
-that with either a .spackle file in your home directory, or a 
-.spackle file in your current directory. 
+If it <b>could</b> do something else, it'd be easy to tell it how to do
+it with either a <tt>.spackle</tt> file in your home directory, or a 
+<tt>.spackle</tt> file in your project's root directory. 
 
-See Spackle::Configuration for more information
+If Spackle is useful to you, I'd love to hear about it.
 
-Example .spackle
+=== PATH
+
+Spackle installs a few utility scripts in the bin directory where
+executables are installed by your system's Rubygems. If you've installed
+Spackle as root, this should be fine. If you've installed Spackle as a
+regular user, you need to make sure the appropriate bin directory is
+in your path. 
+
+To test your configuration, run +which spackle+ in your terminal. If
+you don't see any output, your PATH variable is not correctly configured
+for use with user-installed gems.
+
+See your Rubygems documentation for more information about this.
+
+=== Spackle dotfile
+
+Without a dotfile configured, Spackle won't do anything. This is so
+you can make Spackle a dependency of your project and integrate it
+into your code, yet leave its usage up to each individual developer.
+
+Spackle reads its configuration from a <tt>.spackle</tt> file, which it looks
+for in your home directory first, and in the root directory of your
+project second. Spackle configuration in your project directory takes
+precedence over any in your home directory, so you can override global
+settings on a per-project basis if you like.
+
+Example <tt>.spackle</tt> for Vim users.
 
   Spackle.configure do |c|
-    c.tempdir = "/some/path"
-    c.callback_command = "imaginary_email_command --to user@host.com"
+    c.set_defaults_for :vim
   end
+
+See Spackle::Configuration for more information.
+
+=== RSpec
+
+Add to your spec_helper.rb:
+
+  require "spackle"
+  Spackle.init :with => :spec_formatter
+
+Now whenever RSpec runs, Spackle will listen in to your test results and
+relay information about any errors to your editor.
+
+=== Vim 
+
+Spackle needs a tiny Vim plugin installed to function properly with Vim.
+Simply run +spackle install vim+ and Spackle will copy its plugin into
+your <tt>.vim/plugins</tt> directory.
+
+<b>Optional:</b>
+Spackle also comes with a helper script for invoking Vim with a session
+named after your project's parent directory. It's called <tt>spackle-vim-open</tt>. 
+If you'd like to use it, you'll probably want to add an alias to your 
+<tt>.profile</tt> or <tt>.bashrc</tt>. Example:
+
+  alias e='spackle-vim-open'
 
 == Architecture
 
@@ -83,15 +131,17 @@ Output Formatters
   for your callback to handle
 * found in Spackle::Output
 
-Spackle's core is a Controller that loads its configuration, tries to do
-as much automagically as it can, and tries to stay out of the way. It aids
-the models by routing Errors to the 
+Spackle's core configuration, tries to do as much automagically as it can, 
+and tries to stay out of the way. It aids the models by routing Errors to the
+configured output formatter.
 
 == Known Issues
 
 * Spackle assumes you're using something UNIXy. If you're not, it likely 
-  won't work. I have no interest in changing this, but I'll gladly 
+  won't work. I have no interest in working on this, but I'll gladly 
   pull your patches.
+* Spackle's current implementation only catches test failures from RSpec.
+  Other hooks are in the works.
 
 == Credits
 
@@ -108,7 +158,7 @@ pretty sensible.
   future version unintentionally.
 * Commit, do not mess with rakefile, version, or history.
   (if you want to have your own version, that is fine but
-   bump version in a commit by itself I can ignore when I pull)
+  bump version in a commit by itself I can ignore when I pull)
 * Send me a pull request. Bonus points for topic branches.
 
 == Copyright
