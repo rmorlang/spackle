@@ -35,11 +35,16 @@ module Spackle
       end
     end
 
-    def init
-      unless already_initialized?
-        @already_initialized = true
-        load_config
-        File.unlink spackle_file
+    def init(options = {})      
+      return if already_initialized?
+
+      @already_initialized = true
+      load_config
+      File.unlink spackle_file
+
+      case options[:with]
+      when :spec_formatter
+        ::Spec::Runner.parse_format "Spackle::Spec::Formatter:/dev/null"
       end
     end
 

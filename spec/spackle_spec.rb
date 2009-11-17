@@ -5,6 +5,7 @@ class Spackle::Output::SomeClass
   end
 end
 
+
 describe Spackle do
   it "should be configurable" do
     config = Spackle.configuration
@@ -152,6 +153,11 @@ describe Spackle do
     it "should load the config" do
       Spackle.should_receive :load_config
       Spackle.init
+    end
+
+    it "should insert the RSpec formatter if :with => :spec_formatter specified" do
+      Spec::Runner.should_receive(:parse_format).with /Spackle::Spec::Formatter/
+      Spackle.init :with => :spec_formatter
     end
 
   end
