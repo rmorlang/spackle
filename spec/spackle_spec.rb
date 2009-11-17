@@ -60,16 +60,27 @@ describe Spackle do
       Spackle.spackle_file.should match(%r{^/temp/.+})
     end
 
-    it "should end with default.spackle if no spackle_file specfied in Configuration" do
-      Spackle.configuration.spackle_file = nil
-      Spackle.spackle_file.should match(%r(/default\.spackle$))
-    end
-
     it "should end with the Configuration's spackle_file if specified" do
       Spackle.configuration.spackle_file = "my_spackle"
       Spackle.spackle_file.should match(%r(/my_spackle$))
     end
 
+    describe "when no configured spackle_file" do
+      before do
+        Spackle.configuration.spackle_file = nil
+      end
+
+      it "should end with default.spackle if no project root detected" do
+        Spackle::Helpers::RubyProjectRoot.stub! :search => nil
+        Spackle.spackle_file.should match(%r(/default\.spackle$))
+      end
+
+      it "should be named after the project root if detected" do
+        Spackle::Helpers::RubyProjectRoot.should_receive(:search).and_return("/some/dir/project")
+        Spackle.spackle_file.should match(%r(/project\.spackle$))
+      end
+      
+    end
 
   end
 

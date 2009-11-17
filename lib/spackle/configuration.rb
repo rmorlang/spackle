@@ -15,7 +15,9 @@ module Spackle
     attr_accessor :error_formatter
 
     # Filename to use when writing the formatted Spackle results. If 
-    # unspecified, defaults to "default.spackle"
+    # unspecified, defaults to a filename based on the name of your 
+    # project's root directory, or "default.spackle" it can't figure out
+    # where your root directory is
     attr_accessor :spackle_file
 
     # Configure Spackle with defaults. Currently only accepts :vim as an

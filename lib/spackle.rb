@@ -4,6 +4,7 @@ require 'spackle/configuration'
 require 'spackle/error'
 require 'spackle/output'
 require 'spackle/spec' if defined? Spec
+require 'spackle/helpers/ruby_project_root'
 
 module Spackle
   class << self
@@ -66,7 +67,11 @@ module Spackle
     end
 
     def spackle_file
-      File.join(tempdir, configuration.spackle_file || "default.spackle")      
+      projectname = Spackle::Helpers::RubyProjectRoot.search Dir.pwd
+      projectname = File.basename(projectname) + ".spackle" if projectname
+      filename = configuration.spackle_file || projectname || "default.spackle"
+
+      File.join(tempdir, filename)      
     end
 
     def tempdir
