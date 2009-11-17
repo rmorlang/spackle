@@ -41,7 +41,7 @@ module Spackle
 
       @already_initialized = true
       load_config
-      File.unlink spackle_file
+      File.unlink(spackle_file) if File.exists?(spackle_file)
 
       case options[:with]
       when :spec_formatter

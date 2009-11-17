@@ -160,7 +160,8 @@ describe Spackle do
       Spackle.stub! :load_config => true,
                     :spackle_file => true,
                     :already_initialized? => false
-      File.stub!    :unlink => true
+      File.stub!    :unlink => true,
+                    :exists? => false
     end
     
     it "should only init once" do
@@ -171,9 +172,17 @@ describe Spackle do
       Spackle.init
     end
 
-    it "should delete any old file" do
+    it "should delete the old file, if it exists" do
       Spackle.stub! :spackle_file => "file"
+      File.should_receive(:exists?).with("file").and_return(true)
       File.should_receive(:unlink).with("file")
+      Spackle.init
+    end
+
+    it "should not delete the old file unless it exists" do
+      Spackle.stub! :spackle_file => "file"
+      File.should_receive(:exists?).with("file").and_return(false)
+      File.should_not_receive(:unlink).with("file")
       Spackle.init
     end
 
@@ -186,6 +195,7 @@ describe Spackle do
       Spec::Runner.should_receive(:parse_format).with /Spackle::Spec::Formatter/
       Spackle.init :with => :spec_formatter
     end
+
 
   end
 
