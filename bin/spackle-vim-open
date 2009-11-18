@@ -44,6 +44,7 @@ def arguments
     arguments << "--remote-silent"
     arguments += ARGV
   end
+  arguments
 end
   
 system *arguments
