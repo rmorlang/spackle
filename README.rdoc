@@ -82,6 +82,15 @@ Add to your spec_helper.rb:
   require "spackle"
   Spackle.init :with => :spec_formatter
 
+<b>Note</b>: if you're not otherwise <em>explicitly</em> specifying
+a standard RSpec formatter, Spackle's formatter will swallow all
+your test run results, which probably isn't what you want. To prevent
+this, simply make sure you specify another RSpec output formatter.
+Probably the easiest way to do this is to ensure you have the following
+in your <tt>spec/spec.opts</tt>
+
+  --format progress
+
 Now whenever RSpec runs, Spackle will listen in to your test results and
 relay information about any errors to your editor.
 
