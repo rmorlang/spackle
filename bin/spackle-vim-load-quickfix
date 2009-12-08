@@ -45,5 +45,4 @@ STDERR.reopen("/dev/null")
 STDOUT.reopen(STDERR)
 system %{gvim --servername #{servername} --remote-send "<ESC>" &> /dev/null}
 system %{gvim --servername #{servername} --remote-expr "LoadSpackleQuickfix('#{ARGV.first}')" &> /dev/null}
-system %{gvim --servername #{servername} --remote-send "<ESC><C-W>p" &> /dev/null}
 exit
