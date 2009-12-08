@@ -30,7 +30,7 @@ def servername_from_arguments
 end
 
 def servername_from_project_root
-  project_root = Spackle::Helpers::RubyProjectRoot.search Dir.pwd
+  project_root = ProjectScout.scan Dir.pwd
   File.basename(project_root) if project_root
 end
 
