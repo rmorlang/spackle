@@ -2,7 +2,7 @@
 spackle_dir = File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(spackle_dir) unless $LOAD_PATH.include?(spackle_dir)
 
-require 'spackle/helpers/ruby_project_root'
+require 'project_scout'
 
 # Load a Vim Quickfix file in an active vim session.
 #
