@@ -31,7 +31,7 @@ describe Spackle do
     end
 
     it "should check for a .spackle file in the project root directory" do
-      Spackle::Helpers::RubyProjectRoot.should_receive(:search).and_return("/some/dir/project")
+      ProjectScout.should_receive(:scan).and_return("/some/dir/project")
       File.should_receive(:exists?).with any_args()
       File.should_receive(:exists?).with("/some/dir/project/.spackle").and_return(true)
       Spackle.load_config_from_dotfile.should be_true
@@ -82,12 +82,12 @@ describe Spackle do
       end
 
       it "should end with default.spackle if no project root detected" do
-        Spackle::Helpers::RubyProjectRoot.stub! :search => nil
+        ProjectScout.stub! :scan => nil
         Spackle.spackle_file.should match(%r(/default\.spackle$))
       end
 
       it "should be named after the project root if detected" do
-        Spackle::Helpers::RubyProjectRoot.should_receive(:search).and_return("/some/dir/project")
+        ProjectScout.should_receive(:scan).and_return("/some/dir/project")
         Spackle.spackle_file.should match(%r(/project\.spackle$))
       end
       

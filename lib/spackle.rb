@@ -1,10 +1,11 @@
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__)))
 
+require 'project_scout'
+
 require 'spackle/configuration'
 require 'spackle/error'
 require 'spackle/output'
 require 'spackle/spec' if defined? Spec
-require 'spackle/helpers/ruby_project_root'
 
 module Spackle
   class << self
@@ -62,7 +63,7 @@ module Spackle
       else
         config_files << File.expand_path("~/.spackle") 
 
-        project_root = Spackle::Helpers::RubyProjectRoot.search Dir.pwd
+        project_root = ProjectScout.scan Dir.pwd
         if project_root
           config_files << File.join(project_root, ".spackle")
         end
@@ -78,7 +79,7 @@ module Spackle
     end
 
     def spackle_file
-      projectname = Spackle::Helpers::RubyProjectRoot.search Dir.pwd
+      projectname = ProjectScout.scan Dir.pwd
       projectname = File.basename(projectname) + ".spackle" if projectname
       filename = configuration.spackle_file || projectname || "default.spackle"
 
