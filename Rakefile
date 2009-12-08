@@ -16,6 +16,7 @@ Just tell your editor to jump to the next error location.
     gem.authors = ["Rick Lee-Morlang"]
     gem.add_development_dependency "rspec", ">= 1.2.9"
     gem.add_dependency "project_scout"
+    gem.add_dependency "active_dotfile"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new

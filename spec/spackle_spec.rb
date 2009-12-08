@@ -15,41 +15,9 @@ describe Spackle do
     end
   end
 
-  describe "load_config_from_dotfile" do
-    before do
-      Spackle.stub!(:load)
-    end
-
-    it "should return false if a config file was found" do
-      File.stub(:exists?).and_return false
-      Spackle.load_config_from_dotfile.should be_false
-    end
-
-    it "should return true if a config file was found" do
-      File.stub(:exists?).and_return true
-      Spackle.load_config_from_dotfile.should be_true
-    end
-
-    it "should check for a .spackle file in the project root directory" do
-      ProjectScout.should_receive(:scan).and_return("/some/dir/project")
-      File.should_receive(:exists?).with any_args()
-      File.should_receive(:exists?).with("/some/dir/project/.spackle").and_return(true)
-      Spackle.load_config_from_dotfile.should be_true
-    end
-  end
-
-
-  describe "loading configuration" do
+  describe "default configuration" do
     it "should have nil for the callback command if no config found" do
-      Spackle.stub(:load_config_from_dotfile).and_return(false) 
-      Spackle.load_config
       Spackle.configuration.callback_command.should be_nil
-    end
-
-    it "should not use the vim defaults when a config file is found" do
-      Spackle.configuration.should_not_receive(:set_defaults_for).with(:vim)
-      Spackle.stub(:load_config_from_dotfile).and_return(true) 
-      Spackle.load_config
     end
   end
 
@@ -164,14 +132,6 @@ describe Spackle do
                     :exists? => false
     end
     
-    it "should only init once" do
-      Spackle.should_receive(:load_config).exactly(1).times
-      Spackle.init
-      Spackle.stub! :already_initialized? => true
-      Spackle.should_not_receive(:load_config)
-      Spackle.init
-    end
-
     it "should delete the old file, if it exists" do
       Spackle.stub! :spackle_file => "file"
       File.should_receive(:exists?).with("file").and_return(true)
@@ -183,11 +143,6 @@ describe Spackle do
       Spackle.stub! :spackle_file => "file"
       File.should_receive(:exists?).with("file").and_return(false)
       File.should_not_receive(:unlink).with("file")
-      Spackle.init
-    end
-
-    it "should load the config" do
-      Spackle.should_receive :load_config
       Spackle.init
     end
 

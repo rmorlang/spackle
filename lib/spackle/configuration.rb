@@ -1,5 +1,10 @@
+require 'active_dotfile'
+
 module Spackle
   class Configuration
+    include ActiveDotfile::Configurable
+    load_dotfiles_on_initialize
+
     # The command to invoke when Spackle finds errors. It will receive
     # a single argument, being the path to the Spackle errors file.
     # If left unspecified, no command is invoked.

@@ -22,8 +22,8 @@ module Spackle
     end
 
     def configure
-      yield configuration
-    end    
+      yield @configuration
+    end
 
     def error_formatter_class
       class_name = configuration.error_formatter.to_s.
@@ -41,40 +41,11 @@ module Spackle
       return if already_initialized?
 
       @already_initialized = true
-      load_config
       File.unlink(spackle_file) if File.exists?(spackle_file)
 
       case options[:with]
       when :spec_formatter
         ::Spec::Runner.options.parse_format "Spackle::Spec::SpackleFormatter:/dev/null"
-      end
-    end
-
-    def load_config
-      load_config_from_dotfile 
-    end
-
-    def load_config_from_dotfile
-      config_files = []
-      
-      if ENV['SPACKLE_CONFIG']
-        # SPACKLE_CONFIG is mostly intended for use with the integration tests
-        config_files << File.expand_path(ENV['SPACKLE_CONFIG']) 
-      else
-        config_files << File.expand_path("~/.spackle") 
-
-        project_root = ProjectScout.scan Dir.pwd
-        if project_root
-          config_files << File.join(project_root, ".spackle")
-        end
-      end
-
-      config_files.inject(false) do |config_loaded, file|
-        if File.exists? file
-          load file 
-          config_loaded = true
-        end
-        config_loaded
       end
     end
 
